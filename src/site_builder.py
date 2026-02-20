@@ -16,8 +16,12 @@ Site output:
 import json
 import logging
 import re
+import shutil
 from datetime import datetime
 from pathlib import Path
+
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+_APPLE_TOUCH_ICON_SRC = _PROJECT_ROOT / "PureSignalIcon2.jpg"
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +76,7 @@ class SiteBuilder:
             return
 
         self._write_css()
+        self._copy_apple_touch_icon()
 
         for entry in entries:
             self._build_day_page(entry, css_path="../style.css")
@@ -97,6 +102,14 @@ class SiteBuilder:
             except Exception as e:
                 logger.warning("Failed to read %s: %s", path, e)
         return entries
+
+    def _copy_apple_touch_icon(self) -> None:
+        if _APPLE_TOUCH_ICON_SRC.exists():
+            dest = self.site_dir / "apple-touch-icon.jpg"
+            shutil.copy2(_APPLE_TOUCH_ICON_SRC, dest)
+            logger.info("Copied apple-touch-icon: %s", dest)
+        else:
+            logger.warning("apple-touch-icon source not found: %s", _APPLE_TOUCH_ICON_SRC)
 
     def _format_date(self, date_str: str) -> str:
         try:
@@ -195,6 +208,7 @@ class SiteBuilder:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
+  <link rel="apple-touch-icon" href="/apple-touch-icon.jpg">
   <link rel="stylesheet" href="{css_path}">
 </head>
 <body>
