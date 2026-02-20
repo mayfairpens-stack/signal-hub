@@ -1,0 +1,15 @@
+[Unit]
+Description=Signal Hub — combined daily digest (Pure Signal + Maranello)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/mithrandir/claude/Signal_Hub
+ExecStart=/home/mithrandir/claude/Signal_Hub/run.sh
+StandardOutput=journal
+StandardError=journal
+
+# Forward any remaining environment (picks up CLOUDFLARE_API_TOKEN if set
+# in the user session — alternatively store it in credentials.yaml)
+EnvironmentFile=-%h/claude/Signal_Hub/.env

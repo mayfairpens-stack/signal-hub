@@ -1,0 +1,28 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.Python
+
+# Generated site (deployed via wrangler, don't need in git)
+site/index.html
+site/archive/*.html
+site/style.css
+
+# Data files
+data/pure_signal_processed.json
+data/maranello_seen.db
+data/archive/
+
+# Logs
+logs/*.log
+
+# Credentials (NEVER commit these)
+config/credentials.yaml
+.env
+
+# Editor
+.DS_Store
+.vscode/
+.idea/

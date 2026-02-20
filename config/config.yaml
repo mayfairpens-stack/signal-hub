@@ -1,0 +1,195 @@
+# Signal Hub — Configuration
+# Last updated: 2026-02-20
+
+# Cloudflare Pages deployment
+cloudflare:
+  project_name: "signal-hub"
+  account_id: "4a55b445f11c7fcf37342301937f8d2c"
+
+# Global lookback window for content (hours)
+lookback_hours: 24
+
+# ── Pure Signal: AI researchers to monitor ────────────────────────────
+people:
+  simon_willison:
+    name: "Simon Willison"
+    rss:
+      - url: "https://simonwillison.net/atom/everything/"
+        type: "atom"
+        name: "Simon Willison's Blog"
+
+  dwarkesh_patel:
+    name: "Dwarkesh Patel"
+    lookback_hours: 168
+    rss:
+      - url: "https://api.substack.com/feed/podcast/69345.rss"
+        type: "rss"
+        name: "Dwarkesh Podcast"
+      - url: "https://www.dwarkesh.com/feed"
+        type: "rss"
+        name: "Dwarkesh Blog"
+    web_search:
+      queries:
+        - "Dwarkesh Patel podcast"
+      max_results: 5
+
+  rowan_cheung:
+    name: "Rowan Cheung"
+    rss:
+      - url: "https://rss.beehiiv.com/feeds/2R3C6Bt5wj.xml"
+        type: "rss"
+        name: "The Rundown AI"
+
+  jack_clark:
+    name: "Jack Clark"
+    rss:
+      - url: "https://importai.substack.com/feed"
+        type: "rss"
+        name: "Import AI"
+
+  ethan_mollick:
+    name: "Ethan Mollick"
+    lookback_hours: 168
+    rss:
+      - url: "https://www.oneusefulthing.org/feed"
+        type: "rss"
+        name: "One Useful Thing"
+    web_search:
+      queries:
+        - "Ethan Mollick"
+      max_results: 5
+
+  dan_shipper:
+    name: "Dan Shipper"
+    lookback_hours: 168
+    rss:
+      - url: "https://every.to/feed"
+        type: "rss"
+        name: "Every"
+    web_search:
+      queries:
+        - "Dan Shipper Every AI"
+      max_results: 5
+
+  sebastian_raschka:
+    name: "Sebastian Raschka"
+    lookback_hours: 168
+    rss:
+      - url: "https://magazine.sebastianraschka.com/feed"
+        type: "rss"
+        name: "Ahead of AI"
+    web_search:
+      queries:
+        - "Sebastian Raschka"
+      max_results: 5
+
+  andrej_karpathy:
+    name: "Andrej Karpathy"
+    rss:
+      - url: "https://karpathy.bearblog.dev/feed/"
+        type: "rss"
+        name: "Andrej Karpathy's Blog"
+    web_search:
+      queries:
+        - "Karpathy"
+      max_results: 5
+
+  ben_thompson:
+    name: "Ben Thompson"
+    rss:
+      - url: "https://stratechery.com/feed/"
+        type: "rss"
+        name: "Stratechery"
+
+  nathan_benaich:
+    name: "Nathan Benaich"
+    lookback_hours: 168
+    rss:
+      - url: "https://nathanbenaich.substack.com/feed"
+        type: "rss"
+        name: "Air Street Capital"
+    web_search:
+      queries:
+        - "Nathan Benaich AI"
+      max_results: 5
+
+  bair_blog:
+    name: "BAIR"
+    lookback_hours: 168
+    rss:
+      - url: "https://bair.berkeley.edu/blog/feed.xml"
+        type: "rss"
+        name: "Berkeley AI Research Blog"
+    web_search:
+      queries:
+        - "Berkeley AI Research BAIR"
+      max_results: 3
+
+  yann_lecun:
+    name: "Yann LeCun"
+    web_search:
+      queries:
+        - "Yann LeCun"
+      max_results: 5
+
+  jim_fan:
+    name: "Jim Fan"
+    web_search:
+      queries:
+        - "Jim Fan NVIDIA AI"
+      max_results: 5
+
+  swyx:
+    name: "Swyx"
+    rss:
+      - url: "https://www.latent.space/feed"
+        type: "rss"
+        name: "Latent Space"
+
+  chip_huyen:
+    name: "Chip Huyen"
+    lookback_hours: 168
+    rss:
+      - url: "https://huyenchip.com/feed.xml"
+        type: "rss"
+        name: "Chip Huyen's Blog"
+    web_search:
+      queries:
+        - "Chip Huyen AI"
+      max_results: 5
+
+  lilian_weng:
+    name: "Lilian Weng"
+    lookback_hours: 168
+    rss:
+      - url: "https://lilianweng.github.io/index.xml"
+        type: "rss"
+        name: "Lil'Log"
+    web_search:
+      queries:
+        - "Lilian Weng"
+      max_results: 5
+
+  jeff_dean:
+    name: "Jeff Dean"
+    web_search:
+      queries:
+        - "Jeff Dean Google AI"
+      max_results: 5
+
+# ── Synthesis settings ────────────────────────────────────────────────
+synthesis:
+  model: "claude-sonnet-4-6"   # Both pipelines use this model
+  max_tokens: 8000              # Pure Signal synthesis output cap
+  temperature: 0.7
+
+# ── Data paths ────────────────────────────────────────────────────────
+paths:
+  pure_signal_dedup: "data/pure_signal_processed.json"
+  maranello_seen_db: "data/maranello_seen.db"
+  archive_dir:       "data/archive"
+  log_file:          "logs/signal_hub.log"
+
+# ── Rate limiting ─────────────────────────────────────────────────────
+rate_limits:
+  rss_delay_seconds: 1
