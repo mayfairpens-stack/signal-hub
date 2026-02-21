@@ -21,7 +21,7 @@ from datetime import datetime
 from pathlib import Path
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
-_APPLE_TOUCH_ICON_SRC = _PROJECT_ROOT / "PureSignalIcon2.jpg"
+_APPLE_TOUCH_ICON_SRC = _PROJECT_ROOT / "SignalHubIcon.jpg"
 
 logger = logging.getLogger(__name__)
 
