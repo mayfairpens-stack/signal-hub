@@ -28,6 +28,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.pure_signal import pipeline as ps_pipeline
 from src.maranello import pipeline as mar_pipeline
+from src.hn_signal import pipeline as hn_pipeline
 from src.site_builder import SiteBuilder
 from src.deployer import deploy_site
 
@@ -94,6 +95,7 @@ def main() -> int:
     paths_cfg = config.get("paths", {})
     ps_dedup_path = PROJECT_ROOT / paths_cfg.get("pure_signal_dedup", "data/pure_signal_processed.json")
     mar_db_path   = PROJECT_ROOT / paths_cfg.get("maranello_seen_db",  "data/maranello_seen.db")
+    hn_seen_path  = PROJECT_ROOT / paths_cfg.get("hn_signal_seen",     "data/hn_signal_seen.json")
     archive_dir   = PROJECT_ROOT / paths_cfg.get("archive_dir",        "data/archive")
     site_dir      = PROJECT_ROOT / "site"
 
@@ -130,17 +132,32 @@ def main() -> int:
         logger.exception("Maranello pipeline failed")
         maranello_result = {"briefing": "", "source_links": []}
 
+    # ── Run HN Signal pipeline ──────────────────────────────────────────
+    try:
+        hn_signal_digest = hn_pipeline.run(
+            api_key=api_key,
+            seen_ids_path=hn_seen_path,
+            model=model,
+            max_tokens=max_tokens,
+            temperature=temperature,
+        )
+    except Exception:
+        logger.exception("HN Signal pipeline failed")
+        hn_signal_digest = ""
+
     # ── Check if anything happened today ───────────────────────────────
     has_ps  = bool(pure_signal_digest.strip())
     has_mar = bool(maranello_result.get("briefing", "").strip())
+    has_hn  = bool(hn_signal_digest.strip())
 
-    if not has_ps and not has_mar:
-        logger.info("Both pipelines returned empty — nothing to publish today.")
+    if not has_ps and not has_mar and not has_hn:
+        logger.info("All pipelines returned empty — nothing to publish today.")
         return 0
 
     logger.info(
-        "Results: Pure Signal=%s  Maranello=%s",
+        "Results: Pure Signal=%s  HN Signal=%s  Maranello=%s",
         "yes" if has_ps else "quiet",
+        "yes" if has_hn else "quiet",
         "yes" if has_mar else "quiet",
     )
 
@@ -148,7 +165,7 @@ def main() -> int:
     today = datetime.now(ZoneInfo("America/New_York")).strftime("%Y-%m-%d")
 
     builder = SiteBuilder(site_dir=str(site_dir), archive_dir=str(archive_dir))
-    builder.save_combined_archive(today, pure_signal_digest, maranello_result)
+    builder.save_combined_archive(today, pure_signal_digest, maranello_result, hn_signal=hn_signal_digest)
     builder.build()
 
     if args.dry_run or args.no_deploy:

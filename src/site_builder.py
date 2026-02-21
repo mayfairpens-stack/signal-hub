@@ -42,6 +42,7 @@ class SiteBuilder:
         date_str: str,
         pure_signal_md: str,
         maranello: dict,
+        hn_signal: str = "",
     ) -> None:
         """
         Save today's combined data to data/archive/YYYY-MM-DD.json.
@@ -50,12 +51,14 @@ class SiteBuilder:
             date_str:       "YYYY-MM-DD"
             pure_signal_md: Markdown digest (may be "" if quiet day)
             maranello:      {"briefing": "...", "source_links": [...]}
+            hn_signal:      Markdown digest (may be "" if quiet day)
         """
         self.archive_dir.mkdir(parents=True, exist_ok=True)
         payload = {
             "date": date_str,
             "pure_signal": pure_signal_md,
             "maranello": maranello,
+            "hn_signal": hn_signal,
         }
         out_path = self.archive_dir / f"{date_str}.json"
         out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -174,9 +177,11 @@ class SiteBuilder:
         date_display = self._format_date(date_str)
 
         pure_signal_md = entry.get("pure_signal", "")
+        hn_signal_md = entry.get("hn_signal", "")
         maranello = entry.get("maranello", {})
 
         ps_html = self._md_to_html(pure_signal_md) if pure_signal_md else '<p class="quiet-day">No AI digest today.</p>'
+        hn_html = self._md_to_html(hn_signal_md) if hn_signal_md else '<p class="quiet-day">No HN digest today.</p>'
         mar_html = self._maranello_to_html(maranello)
 
         return f"""    <time>{date_display}</time>
@@ -188,6 +193,16 @@ class SiteBuilder:
       </h2>
       <div class="section-body">
 {ps_html}
+      </div>
+    </section>
+
+    <section class="section hn-signal-section">
+      <h2 class="section-title hn-signal-title">
+        <span class="dot hn-dot"></span> HN Signal
+        <span class="section-sub">Hacker News</span>
+      </h2>
+      <div class="section-body">
+{hn_html}
       </div>
     </section>
 
@@ -242,10 +257,13 @@ class SiteBuilder:
             date_str = entry.get("date", "")
             date_display = self._format_date(date_str)
             has_ps = bool(entry.get("pure_signal", "").strip())
+            has_hn = bool(entry.get("hn_signal", "").strip())
             has_mar = bool(entry.get("maranello", {}).get("briefing", "").strip())
             badges = ""
             if has_ps:
                 badges += '<span class="badge ps-badge">AI</span>'
+            if has_hn:
+                badges += '<span class="badge hn-badge">HN</span>'
             if has_mar:
                 badges += '<span class="badge mar-badge">F1</span>'
             items.append(
@@ -272,6 +290,7 @@ class SiteBuilder:
 
   /* Section accent colours */
   --ps-color:  #4a4a8a;   /* indigo — Pure Signal */
+  --hn-color:  #ff6b35;   /* orange — HN Signal */
   --mar-color: #DC0000;   /* Ferrari red — Maranello */
 }
 
@@ -336,9 +355,11 @@ main > time {
   flex-shrink: 0;
 }
 .ps-dot  { background: var(--ps-color); }
+.hn-dot  { background: var(--hn-color); }
 .mar-dot { background: var(--mar-color); }
 
 .pure-signal-title { color: var(--ps-color); }
+.hn-signal-title   { color: var(--hn-color); }
 .maranello-title   { color: var(--mar-color); }
 
 .section-sub {
@@ -418,6 +439,7 @@ h1 {
   color: #fff;
 }
 .ps-badge  { background: var(--ps-color); }
+.hn-badge  { background: var(--hn-color); }
 .mar-badge { background: var(--mar-color); }
 
 /* ── Responsive ──────────────────────── */

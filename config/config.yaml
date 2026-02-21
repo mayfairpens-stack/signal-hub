@@ -187,6 +187,7 @@ synthesis:
 paths:
   pure_signal_dedup: "data/pure_signal_processed.json"
   maranello_seen_db: "data/maranello_seen.db"
+  hn_signal_seen:    "data/hn_signal_seen.json"
   archive_dir:       "data/archive"
   log_file:          "logs/signal_hub.log"
 
